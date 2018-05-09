@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+
 public class PlayerMovement : MonoBehaviour {
 
     [SerializeField] float arcade_playerSpeed = 1.5f;
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour {
     float _verticalBoost;
     Quaternion _targetRotation;
     float _minY, _maxY, _height;
+    float _previousYPosition;
     VerticalMovement _verticalMovement;
     ControlMode _controlMode;
     bool _didFlap;
@@ -32,15 +34,26 @@ public class PlayerMovement : MonoBehaviour {
     private void Start()
     {
         _myBody = GetComponent<Rigidbody2D>();
-        _myCollider = GetComponent<BoxCollider2D>();
-        _minY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.025f)).y; //Can't go lower than 2.75% of screen
+        _height = CalculateHeight();
+        _minY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.0275f)).y; //Can't go lower than 2.75% of screen
         _maxY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.975f)).y; //Can't go lower than 97.5% of screen
-        _height = _myCollider.size.y / 2 * Mathf.Abs(transform.lossyScale.x);
-        ChangeToArcadeMode();
-        ChangeToFlappyMode();
-        
+        //ChangeToArcadeMode();
+        ChangeToFlappyMode();       
     }
 
+    float CalculateHeight()
+    {
+        var _myCollider = GetComponent<PolygonCollider2D>();
+        var _myPoints = _myCollider.points;
+        var _min = _myPoints[0].y;
+        var _max = _myPoints[0].y;
+        foreach (var point in _myPoints)
+        {
+            if (point.y < _min) _min = point.y;
+            if (point.y > _max) _max = point.y;
+        }
+        return (_max - _min) * Mathf.Abs(transform.lossyScale.y) / 2f;
+    }
 
     void ChangeToArcadeMode()
     {
@@ -62,6 +75,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void Update()
     {
+        _previousYPosition = transform.position.y;
         if (_controlMode == ControlMode.Arcade)
         {
             ArcadeMovement();
@@ -71,8 +85,6 @@ public class PlayerMovement : MonoBehaviour {
             FlappyMovement();
         }
     }
-
-
 
     void ArcadeMovement()
     {
@@ -85,7 +97,6 @@ public class PlayerMovement : MonoBehaviour {
             _targetRotation = Quaternion.Euler(new Vector3(0, 0, Mathf.Sign(_yDistanceInitial) * _maxTurnAngle));
             _verticalMovement = VerticalMovement.MovingToPoint;
         }
-        
     }
 
     void FlappyMovement()
@@ -100,9 +111,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         while (_controlMode == ControlMode.Flappy)
         {
-            HandleFlappyHorizontalMovement(flappy_forwardSpeed);
             float angle = -90f;
-
             if (_didFlap)
             {
                 _didFlap = false;
@@ -118,18 +127,21 @@ public class PlayerMovement : MonoBehaviour {
                     _myBody.rotation = Mathf.LerpAngle(transform.rotation.eulerAngles.z, angle, Time.fixedDeltaTime);
                 }
             }
+            HandleFlappyMovement(flappy_forwardSpeed);
             yield return new WaitForFixedUpdate();
         }
     }
 
-    void HandleFlappyHorizontalMovement(float speed)
+    void HandleFlappyMovement(float speed)
     {
-        transform.position += transform.right * Time.fixedDeltaTime * speed;
+        var newPosition = transform.position + transform.right * Time.fixedDeltaTime * speed;
+        newPosition.y = Mathf.Clamp(newPosition.y, _minY + _height, _maxY - _height);
+        transform.position = newPosition;
     }
 
     IEnumerator HandleArcadeMovementEveryFixedUpdate()
     {
-        _verticalBoost = 0f;
+
         while (_controlMode == ControlMode.Arcade)
         {
             if (_verticalMovement != VerticalMovement.NotMoving)
@@ -140,6 +152,13 @@ public class PlayerMovement : MonoBehaviour {
                     _verticalBoost = 1f;
                 }
             }
+            else
+            {
+                if (YMovement())
+                {
+                    StabilizePlayer();
+                }
+            }
             HandleArcadeMovement(arcade_playerSpeed, _verticalBoost);
             yield return new WaitForFixedUpdate();
         }
@@ -147,13 +166,11 @@ public class PlayerMovement : MonoBehaviour {
 
     void HandleArcadeMovement(float speed, float verticalBoost)
     {
-
         Vector3 _direction = transform.right;
         var newPosition = transform.position + _direction * speed * Time.fixedDeltaTime;
         newPosition.y += - (transform.position.y - newPosition.y) * (1f + verticalBoost);
         newPosition.y = Mathf.Clamp(newPosition.y, _minY + _height, _maxY - _height);
         _myBody.MovePosition(newPosition);
-
     }
 
     void HandleRotation()
@@ -173,20 +190,31 @@ public class PlayerMovement : MonoBehaviour {
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.fixedDeltaTime * _turningAngle * 2f);
 
-            if (_currentHeight == _targetHeight)
+            if (Mathf.Abs(_currentHeight - _targetHeight) < 0.05f)
             {
-                transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
                 _verticalMovement = VerticalMovement.NotMoving;
             }
 
             if (transform.rotation.z == 0)
             {
                 _verticalMovement = VerticalMovement.NotMoving;
+                
             }
         }
     }
 
+    void StabilizePlayer()
+    {
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+        _verticalBoost = 0f;
+        _myBody.velocity = new Vector2(_myBody.velocity.x, 0f);
+        _myBody.angularVelocity = 0f;
+    }
 
+    bool YMovement()
+    {
+        return _currentHeight != transform.position.y;
+    }
 
 
 }

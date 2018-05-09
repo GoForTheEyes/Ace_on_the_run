@@ -43,7 +43,8 @@ public class BackgroundManager : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        _currentStyleName = "MountainSky";
+        //_currentStyleName = "MountainSky";
+        _currentStyleName = "Cavern";
         _cameraTransform = Camera.main.transform;
         _currentCameraX = _cameraTransform.position.x;
         _lastCameraX = _cameraTransform.position.x;
