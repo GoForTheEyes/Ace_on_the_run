@@ -6,10 +6,12 @@ using UnityEngine;
 public class Ammo : MonoBehaviour {
 
     public enum ShotDirection { right, left };
+    public enum WhoFired { Player, Enemy}
 
     public float Damage { get; set; }
     public float Speed { get; set; }
-    public ShotDirection Direction;
+    [HideInInspector] public ShotDirection Direction;
+    [HideInInspector] public WhoFired WhoFiredAmmo;
 
     int _directionModifier;
 
@@ -23,7 +25,6 @@ public class Ammo : MonoBehaviour {
         {
             _directionModifier = -1;
         }
-        
     }
 
     // Update is called once per frame
@@ -33,17 +34,16 @@ public class Ammo : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D hitObject)
     {
-        if (hitObject.gameObject.CompareTag("Enemy"))
+        if (hitObject.gameObject.CompareTag(WhoFiredAmmo.ToString()))
         {
-            hitObject.GetComponent<EnemyAI>().ApplyDamage(Damage);
+            return;
+        }
+
+        if (hitObject.gameObject.CompareTag("Enemy") || hitObject.gameObject.CompareTag("Player"))
+        {
+            hitObject.GetComponent<Character>().ApplyDamage(Damage);
             Destroy(gameObject);
         }
-        if (hitObject.gameObject.CompareTag("Player"))
-        {
-            hitObject.GetComponent<PlayerHealth>().ApplyDamage(Damage);
-            Destroy(gameObject);
-        }
-        
     }
 
 }

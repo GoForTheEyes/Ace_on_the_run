@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EditorWireGizmo : MonoBehaviour {
 
-    float _wireRadius = 1f;
+    float _wireRadius = 0.1f;
 
     private void OnDrawGizmos()
     {

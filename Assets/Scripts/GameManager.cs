@@ -6,20 +6,14 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
-    //public static GameManager instance;
-
     public Text power;
     public Text health;
 
-    PlayerHealth _player;
+    Player _player;
 
 	// Use this for initialization
 	void Start () {
-        //if (instance == null)
-        //      {
-        //          GameManager.instance = this;
-        //      }
-        _player = GameObject.FindObjectOfType<PlayerHealth>();
+        _player = FindObjectOfType<Player>();
         EnableListeners();
 	}
 	

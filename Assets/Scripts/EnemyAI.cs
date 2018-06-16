@@ -60,6 +60,7 @@ public class EnemyAI : MonoBehaviour {
         shot.Speed = bulletSpeed;
         shot.Damage = damage;
         shot.Direction = Ammo.ShotDirection.left;
+        shot.WhoFiredAmmo = Ammo.WhoFired.Enemy;
     }
 
     public void ApplyDamage(float dmg)

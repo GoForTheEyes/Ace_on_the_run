@@ -7,18 +7,7 @@ public class EnemySpawner : MonoBehaviour {
     [SerializeField] Transform[] spawnPoints;
     [SerializeField] GameObject[] enemies;
 
-
-	// Use this for initialization
-	void Start () {
-        SpawnAll();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    void SpawnAll()
+    public void SpawnAllEnemies()
     {
         foreach(Transform spawnPoint in spawnPoints)
         {
@@ -27,6 +16,12 @@ public class EnemySpawner : MonoBehaviour {
         }
     }
 
+    public void SpawnEnemy()
+    {
+        int index = Random.Range(0, spawnPoints.Length);
+        var enemy = Instantiate(enemies[0]);
+        enemy.transform.position = spawnPoints[index].position;
+    }
 
 
 }

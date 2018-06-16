@@ -1,23 +1,33 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerFireWeapon : MonoBehaviour {
 
+    public Action<float> WeaponFired;
+
     [Header("Weapon")]
-    [SerializeField] GameObject weaponRack;
+    [SerializeField] GameObject[] weaponRack;
     [SerializeField] float rateOfFirePerMinute;
     [SerializeField] Ammo ammo;
     [SerializeField] float damage;
     [SerializeField] float bulletSpeed;
+    [SerializeField] float energyConsumption;
     float _timeSinceLastShotFired =0f;
+
+
 
     void Fire()
     {
-        var shot = Instantiate(ammo, weaponRack.transform.position, weaponRack.transform.rotation);
-        shot.Speed = bulletSpeed;
-        shot.Damage = damage;
-        shot.Direction = Ammo.ShotDirection.right;
+        foreach (GameObject weaponBay in weaponRack)
+        {
+            var shot = Instantiate(ammo, weaponBay.transform.position, weaponBay.transform.rotation);
+            shot.Speed = bulletSpeed;
+            shot.Damage = damage;
+            shot.Direction = Ammo.ShotDirection.right;
+            shot.WhoFiredAmmo = Ammo.WhoFired.Player;
+            WeaponFired(energyConsumption);
+        }
     }
 
     private void Update()
