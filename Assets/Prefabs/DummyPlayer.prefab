@@ -100,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1411081713962150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.14, y: -0.29, z: 0}
+  m_LocalPosition: {x: 1.24, y: -0.29, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991996476820616}
@@ -141,7 +141,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1399637538823928}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.85, y: -0.36, z: 0}
+  m_LocalPosition: {x: 0.99, y: -0.36, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991996476820616}
@@ -265,7 +265,7 @@ MonoBehaviour:
   weaponRack:
   - {fileID: 1411081713962150}
   - {fileID: 1399637538823928}
-  rateOfFirePerMinute: 180
+  rateOfFirePerMinute: 240
   ammo: {fileID: 114054471616587756, guid: afb0a2c31ba129d4a9b2f5222a9aa9e4, type: 2}
   damage: 100
   bulletSpeed: 15

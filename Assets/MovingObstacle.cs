@@ -2,14 +2,16 @@
 
 public class MovingObstacle : MonoBehaviour {
 
+#pragma warning disable 0649
     [SerializeField] float speed;
     [SerializeField] float switchTime;
     float _timeSinceLastSwitch;
     Vector3 _direction;
     float _minY, _maxY;
+#pragma warning restore
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         _timeSinceLastSwitch = 0f;
         _minY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.15f)).y; //Can't go lower than 15% of screen
         _maxY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.85f)).y; //Can't go lower than 85% of screen

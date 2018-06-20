@@ -1,47 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-
 
 public class PlayerMovement : MonoBehaviour {
+
+    enum VerticalMovement { MovingToPoint, CompletingMovement, NotMoving };
+    public enum ControlMode { Arcade, Flappy, Static };
 
     [SerializeField] float arcade_playerSpeed = 1.5f;
     [SerializeField] float flappy_forwardSpeed = 2f;
     [SerializeField] float flappy_bounceSpeed = 5f;
 
-    public enum VerticalMovement { MovingToPoint, CompletingMovement , NotMoving };
+    float _previousYPosition;
 
-    public enum ControlMode { Arcade, Flappy, Static };
-
-    Rigidbody2D _myBody;
-    BoxCollider2D _myCollider;
-
-    float _targetHeight;
-    float _currentHeight;
+    float _targetHeight, _currentHeight;
     float _yDistanceInitial;
     float _turningAngle = 5f;
     float _maxTurnAngle = 60f;
     float _distanceToStopVerticalMovement = 0.25f;
     float _verticalBoost;
+    float _currentPower;
+    Vector3 _newPosition;
     Quaternion _targetRotation;
+    Rigidbody2D _myBody;
+    PlayerEngine _myEngine;
     float _minY, _maxY, _height;
-    float _previousYPosition;
     VerticalMovement _verticalMovement;
     ControlMode _controlMode;
     bool _didFlap;
 
-    private void Start()
-    {
+    // Use this for initialization
+    void Start () {
         _myBody = GetComponent<Rigidbody2D>();
-        _height = CalculateHeight();
+        _height = GetHeight();
         _minY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.0275f)).y; //Can't go lower than 2.75% of screen
         _maxY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.975f)).y; //Can't go lower than 97.5% of screen
-        //ChangeToArcadeMode();
-        ChangeToFlappyMode();       
+        _myEngine = GetComponent<PlayerEngine>();
+        ChangeToArcadeMode();
+        //ChangeToFlappyMode();
     }
 
-    float CalculateHeight()
+    float GetHeight()
     {
         var _myCollider = GetComponent<PolygonCollider2D>();
         var _myPoints = _myCollider.points;
@@ -73,7 +72,13 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
-    private void Update()
+    // Update is called once per frame
+    void Update () {
+        _currentPower = _myEngine.GetPower();
+        MovementLogic();
+    }
+
+    void MovementLogic()
     {
         _previousYPosition = transform.position.y;
         if (_controlMode == ControlMode.Arcade)
@@ -122,7 +127,7 @@ public class PlayerMovement : MonoBehaviour {
             }
             else
             {
-                if (_myBody.velocity.y <0) //No upward motion
+                if (_myBody.velocity.y < 0) //No upward motion
                 {
                     _myBody.rotation = Mathf.LerpAngle(transform.rotation.eulerAngles.z, angle, Time.fixedDeltaTime);
                 }
@@ -134,9 +139,9 @@ public class PlayerMovement : MonoBehaviour {
 
     void HandleFlappyMovement(float speed)
     {
-        var newPosition = transform.position + transform.right * Time.fixedDeltaTime * speed;
-        newPosition.y = Mathf.Clamp(newPosition.y, _minY + _height, _maxY - _height);
-        transform.position = newPosition;
+        _newPosition = transform.position + transform.right * speed * _currentPower * Time.fixedDeltaTime;
+        _newPosition.y = Mathf.Clamp(_newPosition.y, _minY + _height, _maxY - _height);
+        transform.position = _newPosition;
     }
 
     IEnumerator HandleArcadeMovementEveryFixedUpdate()
@@ -144,20 +149,18 @@ public class PlayerMovement : MonoBehaviour {
 
         while (_controlMode == ControlMode.Arcade)
         {
-            if (_verticalMovement != VerticalMovement.NotMoving)
+            if (_verticalMovement == VerticalMovement.MovingToPoint) //Move faster vertically
             {
-                HandleRotation();
-                if (_verticalMovement == VerticalMovement.MovingToPoint)
-                {
-                    _verticalBoost = 1f;
-                }
+                _verticalBoost = 1f;
             }
             else
             {
-                if (YMovement())
-                {
-                    StabilizePlayer();
-                }
+                _verticalBoost = 0f;
+            }
+
+            if (_verticalMovement != VerticalMovement.NotMoving)
+            {
+                HandleRotation();
             }
             HandleArcadeMovement(arcade_playerSpeed, _verticalBoost);
             yield return new WaitForFixedUpdate();
@@ -166,11 +169,10 @@ public class PlayerMovement : MonoBehaviour {
 
     void HandleArcadeMovement(float speed, float verticalBoost)
     {
-        Vector3 _direction = transform.right;
-        var newPosition = transform.position + _direction * speed * Time.fixedDeltaTime;
-        newPosition.y += - (transform.position.y - newPosition.y) * (1f + verticalBoost);
-        newPosition.y = Mathf.Clamp(newPosition.y, _minY + _height, _maxY - _height);
-        _myBody.MovePosition(newPosition);
+        _newPosition = transform.position + transform.right * speed * _currentPower * Time.fixedDeltaTime;
+        _newPosition.y += -(transform.position.y - _newPosition.y) * (1f + verticalBoost);
+        _newPosition.y = Mathf.Clamp(_newPosition.y, _minY + _height, _maxY - _height);
+        _myBody.MovePosition(_newPosition);
     }
 
     void HandleRotation()
@@ -188,17 +190,18 @@ public class PlayerMovement : MonoBehaviour {
         }
         else if (_verticalMovement == VerticalMovement.CompletingMovement)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.fixedDeltaTime * _turningAngle * 2f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.fixedDeltaTime * _turningAngle);
 
             if (Mathf.Abs(_currentHeight - _targetHeight) < 0.05f)
             {
                 _verticalMovement = VerticalMovement.NotMoving;
+                StabilizePlayer();
             }
 
             if (transform.rotation.z == 0)
             {
                 _verticalMovement = VerticalMovement.NotMoving;
-                
+                StabilizePlayer();
             }
         }
     }
@@ -211,10 +214,6 @@ public class PlayerMovement : MonoBehaviour {
         _myBody.angularVelocity = 0f;
     }
 
-    bool YMovement()
-    {
-        return _currentHeight != transform.position.y;
-    }
 
 
 }

@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class Player : Character {
 
-    //public new float startingHealth;
-
     public Action<float> PlayerHealthChanged;
     public Action<float> PlayerEnginePowerChanged;
 

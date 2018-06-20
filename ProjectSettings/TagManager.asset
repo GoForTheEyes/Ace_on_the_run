@@ -54,3 +54,6 @@ TagManager:
   - name: Ammo
     uniqueID: 2755630919
     locked: 0
+  - name: UI
+    uniqueID: 2526362007
+    locked: 0

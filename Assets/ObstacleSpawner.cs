@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour {
 
+#pragma warning disable 0649
     [SerializeField] GameObject[] obstacles;
     [SerializeField] float distanceBetweenSpawns;
     [SerializeField] Transform parent;
     float _yPosition, _lastSpawnX;
     int _index;
+#pragma warning restore
 
     float SpawnPositionX { get { return Camera.main.ViewportToWorldPoint(new Vector2(1.1f, 0f)).x; } }
 

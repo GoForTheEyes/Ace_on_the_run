@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour {
 
-    [SerializeField] float _speed;
+#pragma warning disable 0649
+    [SerializeField] float speed;
+#pragma warning restore
 
-    Engine _myEngine;
-    Rigidbody2D _myBody;
-    float _minY, _maxY, _height;
+    Engine myEngine;
+    Rigidbody2D myBody;
+    float minY, maxY, height;
 
     // Use this for initialization
     protected virtual void Start () {
-        _minY = Camera.main.ViewportToWorldPoint(Vector2.zero).y;
-        _maxY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 1f)).y;
-        _myEngine = GetComponent<Engine>();
-        _myBody = GetComponent<Rigidbody2D>();
-        _height = GetHeight();
+        minY = Camera.main.ViewportToWorldPoint(Vector2.zero).y;
+        maxY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 1f)).y;
+
+        myEngine = GetComponent<Engine>();
+        myBody = GetComponent<Rigidbody2D>();
+
+        height = GetHeight();
     }
 
     protected virtual float GetHeight()
@@ -33,9 +37,8 @@ public class Movement : MonoBehaviour {
     protected virtual void MovementLogic()
     {
         Vector3 _direction = -transform.right * Mathf.Sign(transform.localScale.x);
-        var newPosition = transform.position + _direction * _speed * Time.fixedDeltaTime;
-        newPosition.y = Mathf.Clamp(newPosition.y, _minY + _height, _maxY - _height);
-        _myBody.MovePosition(newPosition);
+        var newPosition = transform.position + _direction * speed * Time.fixedDeltaTime;
+        myBody.MovePosition(newPosition);
     }
 
 }

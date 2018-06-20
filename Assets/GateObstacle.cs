@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class GateObstacle : MonoBehaviour {
 
+#pragma warning disable 0649
     [SerializeField] float speed , minScreenAperture, maxScreenAperture;
     [SerializeField] float timeInBetween;
     [SerializeField] GameObject lowerObstacle, upperObstacle;
     [SerializeField] BoxCollider2D centerAperture;
+#pragma warning restore
 
     bool _closing;
     float _timeElapsedSinceChange = 0f;

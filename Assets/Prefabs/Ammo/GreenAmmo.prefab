@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4970532403621782}
   - component: {fileID: 212023961778660886}
   - component: {fileID: 61667952409324348}
-  - component: {fileID: 114847758607200048}
   - component: {fileID: 50330440178537382}
+  - component: {fileID: 114847758607200048}
   m_Layer: 0
   m_Name: GreenAmmo
   m_TagString: Untagged
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Direction: 0
-  WhoFiredAmmo: 0
+  ammoTarget: 0
 --- !u!212 &212023961778660886
 SpriteRenderer:
   m_ObjectHideFlags: 1

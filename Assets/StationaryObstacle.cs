@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class StationaryObstacle : MonoBehaviour {
 
+#pragma warning disable 0649
     [SerializeField][Tooltip("Value between (0,1)")] float minY, maxY;
+#pragma warning restore
 
     float _minY, _maxY;
 

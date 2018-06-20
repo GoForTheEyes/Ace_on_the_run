@@ -6,49 +6,50 @@ using System.Linq;
 
 public class BackgroundManager : MonoBehaviour {
 
-    /// <summary>
-    /// Types of Backgrounds
-    /// </summary>
+#pragma warning disable 0649
     [Header("Background Styles")]
     [SerializeField] List<BackgroundTheme> backgroundStyles;
-    Dictionary<string, BackgroundTheme> _styleDictionary = new Dictionary<string, BackgroundTheme>();
 
-    /// <summary>
-    /// Current background style
-    /// </summary>
-    string _currentStyleName;
-    BackgroundTheme _currentTheme;
-
-    /// <summary>
-    /// Current background & foreground elements
-    /// </summary>
-    List<List<GameObject>> _backgroundGroup = new List<List<GameObject>>();
-    List<List<GameObject>> _foregroundGroup = new List<List<GameObject>>();
-
-    /// <summary>
-    /// Camera Tracking
-    /// </summary>
-    Transform _cameraTransform;
-    float _currentCameraX, _lastCameraX;
-
-    /// <summary>
-    /// Parallax Effect
-    /// </summary>
     [Header("Parallax")]
     [SerializeField] bool backgroundParallax = true;
     [SerializeField] float backgroundParallaxSpeed;
     [SerializeField] bool foregroundParallax = true;
     [SerializeField] float foregroundParallaxSpeed;
 
+    [Header("Transition")]
+    [SerializeField] GameObject transitionObject;
 
-    // Use this for initialization
-    void Start() {
-        //_currentStyleName = "MountainSky";
-        _currentStyleName = "Cavern";
+    string _currentStyleName;
+    BackgroundTheme _currentTheme;
+
+    Dictionary<string, BackgroundTheme> _styleDictionary = new Dictionary<string, BackgroundTheme>();
+
+    List<List<GameObject>> _backgroundGroup = new List<List<GameObject>>();
+    List<List<GameObject>> _foregroundGroup = new List<List<GameObject>>();
+    float _widthLastBackground, _widthLastForeground;
+
+    Transform _cameraTransform;
+    float _currentCameraX, _lastCameraX;
+#pragma warning restore
+
+    List<string> OpenAirStyle = new List<string>();
+    List<string> CavernStyle = new List<string>();
+    bool OpenAirBackground;
+    bool transition;
+
+    private void Awake()
+    {
+        InitializeDictionary();
+        InitializeStyles();
+    }
+
+    void Start()
+    {
         _cameraTransform = Camera.main.transform;
         _currentCameraX = _cameraTransform.position.x;
         _lastCameraX = _cameraTransform.position.x;
-        InitializeDictionary();
+
+        ChangeStyleType(); //By default selects open air
         InitializeBackgrounds();
     }
 
@@ -60,6 +61,12 @@ public class BackgroundManager : MonoBehaviour {
         CheckBackground();
         CheckForeground();
         _lastCameraX = _cameraTransform.position.x;
+    }
+
+    void InitializeStyles()
+    {
+        OpenAirStyle.Add("MountainSky");
+        CavernStyle.Add("Cavern");
     }
 
     void InitializeDictionary()
@@ -99,6 +106,22 @@ public class BackgroundManager : MonoBehaviour {
             }
             _currentTheme.IncreaseForegroundIndex();
         }
+        _widthLastBackground = _widthLastForeground = _currentTheme.Width;
+    }
+
+    void ChangeStyleType()
+    {
+        if (!OpenAirBackground)
+        {
+            _currentStyleName = OpenAirStyle[Random.Range(0, OpenAirStyle.Count)];
+            OpenAirBackground = true;
+        }
+        else
+        {
+            _currentStyleName = CavernStyle[Random.Range(0, CavernStyle.Count)];
+            OpenAirBackground = false;
+        }
+        _currentTheme = _styleDictionary[_currentStyleName];
     }
 
     void ParallaxEffect()
@@ -146,6 +169,14 @@ public class BackgroundManager : MonoBehaviour {
             _currentCameraX - _firstBackgroundGroupPostionX) //Check if object is beyond allowed distance from camera
         {
             CollectFirstBackground();
+
+            if (transition)
+            {
+                transition = false;
+                SetTransitionObject();
+                ChangeStyleType();
+                
+            }
             SetNewBackground();
         }
     }
@@ -167,15 +198,24 @@ public class BackgroundManager : MonoBehaviour {
         var _nextBackground = _currentTheme.BackgroundGroup[_currentTheme.NextAvailableBackgroundIndex];
         _backgroundGroup.Add(_nextBackground);
         _currentTheme.IncreaseBackgroundIndex();
-
+        _widthLastBackground = _currentTheme.Width;
         foreach (var element in _nextBackground) 
         {
             element.transform.position = 
-                new Vector3 (_lastBackgroundGroupPostionX + _currentTheme.Width,
+                new Vector3 (_lastBackgroundGroupPostionX + _widthLastBackground,
                             element.transform.position.y,
                             element.transform.position.z);
             element.SetActive(true);
         }
+        
+    }
+
+    void SetTransitionObject()
+    {
+        var _lastBackgroundGroup = _backgroundGroup.Last();
+        var _lastBackgroundGroupPostionX = _lastBackgroundGroup.First().transform.position.x;
+        transitionObject.SetActive(true);
+        transitionObject.transform.position = new Vector3(_lastBackgroundGroupPostionX, 0f, 0f);
     }
 
     void CheckForeground()
@@ -212,17 +252,21 @@ public class BackgroundManager : MonoBehaviour {
         var _nextForeground = _currentTheme.ForegroundGroup[_currentTheme.NextAvailableForegroundIndex];
         _foregroundGroup.Add(_nextForeground);
         _currentTheme.IncreaseForegroundIndex();
-
+        _widthLastForeground = _currentTheme.Width;
         foreach (var element in _nextForeground)
         {
             element.transform.position =
-                new Vector3(_lastForegroundGroupPostionX + _currentTheme.Width,
+                new Vector3(_lastForegroundGroupPostionX + _widthLastForeground,
                             element.transform.position.y,
                             element.transform.position.z);
             element.SetActive(true);
         }
+        
     }
 
-
+    public void TriggerTransition()
+    {
+        transition = true;
+    }
 
 }
