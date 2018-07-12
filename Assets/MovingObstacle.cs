@@ -3,11 +3,15 @@
 public class MovingObstacle : MonoBehaviour {
 
 #pragma warning disable 0649
+    [SerializeField] float scoreValue;
     [SerializeField] float speed;
     [SerializeField] float switchTime;
     float _timeSinceLastSwitch;
     Vector3 _direction;
     float _minY, _maxY;
+
+    bool _playerWentThrough;
+
 #pragma warning restore
 
     // Use this for initialization
@@ -45,6 +49,14 @@ public class MovingObstacle : MonoBehaviour {
         _direction *= -1f; 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && !_playerWentThrough)
+        {
+            _playerWentThrough = true;
+            ScoreManager.instance.UpdateScoreExtra(scoreValue);
+        }
+    }
 
 
 }

@@ -37,7 +37,13 @@ public class Ammo : MonoBehaviour {
         if (hitObject.gameObject.CompareTag(ammoTarget.ToString()))
         {
             hitObject.GetComponent<Character>().ApplyDamage(Damage);
+            Impact();
         }
+    }
+
+    public void Impact()
+    {
+        Destroy(gameObject);
     }
 
 }

@@ -547,6 +547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2135d9a7f0ba8ed48b3899419d9fc190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 10
   minY: 0.3
   maxY: 0.7
 --- !u!212 &212157168809407518

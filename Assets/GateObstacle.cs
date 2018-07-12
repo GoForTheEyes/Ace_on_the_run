@@ -5,6 +5,7 @@ using UnityEngine;
 public class GateObstacle : MonoBehaviour {
 
 #pragma warning disable 0649
+    [SerializeField] float scoreValue;
     [SerializeField] float speed , minScreenAperture, maxScreenAperture;
     [SerializeField] float timeInBetween;
     [SerializeField] GameObject lowerObstacle, upperObstacle;
@@ -12,6 +13,7 @@ public class GateObstacle : MonoBehaviour {
 #pragma warning restore
 
     bool _closing;
+    bool _playerWentThrough;
     float _timeElapsedSinceChange = 0f;
     float _screenHeightInWorldCoordinates;
 
@@ -70,6 +72,15 @@ public class GateObstacle : MonoBehaviour {
             upperObstacle.transform.position += Vector3.down * speed * Time.deltaTime;
             var _gapDecrease = speed * Time.deltaTime * 2f;
             centerAperture.size = new Vector2(centerAperture.size.x, centerAperture.size.y - _gapDecrease);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && !_playerWentThrough)
+        {
+            _playerWentThrough = true;
+            ScoreManager.instance.UpdateScoreExtra(scoreValue);
         }
     }
 

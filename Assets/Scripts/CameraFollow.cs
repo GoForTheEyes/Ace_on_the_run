@@ -16,7 +16,11 @@ public class CameraFollow : MonoBehaviour {
     }
 	
 	void FixedUpdate () {
-        MoveTheCamera();
+        if (_playerObject != null)
+        {
+            MoveTheCamera();
+        }
+        
     }
 
     void MoveTheCamera()

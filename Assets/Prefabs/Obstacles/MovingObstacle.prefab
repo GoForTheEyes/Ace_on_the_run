@@ -547,6 +547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 792d2023137628a41ac1a0b62d188041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 20
   speed: 1.5
   switchTime: 5
 --- !u!212 &212071831713031192

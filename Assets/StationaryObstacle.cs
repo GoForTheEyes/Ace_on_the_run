@@ -5,10 +5,12 @@ using UnityEngine;
 public class StationaryObstacle : MonoBehaviour {
 
 #pragma warning disable 0649
+    [SerializeField] float scoreValue;
     [SerializeField][Tooltip("Value between (0,1)")] float minY, maxY;
 #pragma warning restore
 
     float _minY, _maxY;
+    bool _playerWentThrough;
 
     // Use this for initialization
     void Start () {
@@ -17,6 +19,14 @@ public class StationaryObstacle : MonoBehaviour {
 
         transform.position = new Vector2(transform.position.x, Random.Range(_minY, _maxY));
     }
-	
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && !_playerWentThrough)
+        {
+            _playerWentThrough = true;
+            ScoreManager.instance.UpdateScoreExtra(scoreValue);
+        }
+    }
 
 }

@@ -547,6 +547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a2dec0bfd13c814bb553c346bb879ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreValue: 25
   speed: 1.5
   minScreenAperture: 0.25
   maxScreenAperture: 0.6

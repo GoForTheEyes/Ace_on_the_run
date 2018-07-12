@@ -7,8 +7,25 @@ using System.Linq;
 public class BackgroundManager : MonoBehaviour {
 
 #pragma warning disable 0649
+
+    public System.Action<bool> StartTransition;
+
+    [Header("Background Switching")]
+    [SerializeField] float _minTimeBeforeSwappingBackground;
+    [SerializeField] float _chanceOfBackgroundTransition;
+    [SerializeField] GameObject transitionObject;
+    bool _openAirBackground;
+    float _timeSinceLastTransition;
+
     [Header("Background Styles")]
     [SerializeField] List<BackgroundTheme> backgroundStyles;
+    string _currentStyleName;
+    BackgroundTheme _currentTheme;
+    List<string> OpenAirStyle = new List<string>();
+    List<string> CavernStyle = new List<string>();
+    Dictionary<string, BackgroundTheme> _styleDictionary = new Dictionary<string, BackgroundTheme>();
+    List<List<GameObject>> _backgroundGroup = new List<List<GameObject>>();
+    List<List<GameObject>> _foregroundGroup = new List<List<GameObject>>();
 
     [Header("Parallax")]
     [SerializeField] bool backgroundParallax = true;
@@ -16,26 +33,11 @@ public class BackgroundManager : MonoBehaviour {
     [SerializeField] bool foregroundParallax = true;
     [SerializeField] float foregroundParallaxSpeed;
 
-    [Header("Transition")]
-    [SerializeField] GameObject transitionObject;
-
-    string _currentStyleName;
-    BackgroundTheme _currentTheme;
-
-    Dictionary<string, BackgroundTheme> _styleDictionary = new Dictionary<string, BackgroundTheme>();
-
-    List<List<GameObject>> _backgroundGroup = new List<List<GameObject>>();
-    List<List<GameObject>> _foregroundGroup = new List<List<GameObject>>();
     float _widthLastBackground, _widthLastForeground;
-
     Transform _cameraTransform;
     float _currentCameraX, _lastCameraX;
-#pragma warning restore
 
-    List<string> OpenAirStyle = new List<string>();
-    List<string> CavernStyle = new List<string>();
-    bool OpenAirBackground;
-    bool transition;
+#pragma warning restore
 
     private void Awake()
     {
@@ -51,6 +53,7 @@ public class BackgroundManager : MonoBehaviour {
 
         ChangeStyleType(); //By default selects open air
         InitializeBackgrounds();
+        _timeSinceLastTransition = 0f;
     }
 
     //Camera moves with LateUpdate, thus manager uses it instead of Update
@@ -61,6 +64,20 @@ public class BackgroundManager : MonoBehaviour {
         CheckBackground();
         CheckForeground();
         _lastCameraX = _cameraTransform.position.x;
+        _timeSinceLastTransition += Time.deltaTime;
+    }
+
+    bool CheckIfTransition()
+    {
+        if (_timeSinceLastTransition > _minTimeBeforeSwappingBackground)
+        {
+            if (_chanceOfBackgroundTransition < Random.Range(0f, 1f))
+            {
+                _timeSinceLastTransition = 0f;
+                return true;
+            }
+        }
+        return false;
     }
 
     void InitializeStyles()
@@ -111,15 +128,15 @@ public class BackgroundManager : MonoBehaviour {
 
     void ChangeStyleType()
     {
-        if (!OpenAirBackground)
+        if (!_openAirBackground)
         {
             _currentStyleName = OpenAirStyle[Random.Range(0, OpenAirStyle.Count)];
-            OpenAirBackground = true;
+            _openAirBackground = true;
         }
         else
         {
             _currentStyleName = CavernStyle[Random.Range(0, CavernStyle.Count)];
-            OpenAirBackground = false;
+            _openAirBackground = false;
         }
         _currentTheme = _styleDictionary[_currentStyleName];
     }
@@ -170,12 +187,11 @@ public class BackgroundManager : MonoBehaviour {
         {
             CollectFirstBackground();
 
-            if (transition)
+            if (CheckIfTransition())
             {
-                transition = false;
                 SetTransitionObject();
                 ChangeStyleType();
-                
+                StartTransition(_openAirBackground);
             }
             SetNewBackground();
         }
@@ -262,11 +278,6 @@ public class BackgroundManager : MonoBehaviour {
             element.SetActive(true);
         }
         
-    }
-
-    public void TriggerTransition()
-    {
-        transition = true;
     }
 
 }

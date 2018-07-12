@@ -5,6 +5,7 @@ using UnityEngine;
 public class Character : MonoBehaviour {
 
     public float startingHealth;
+    public GameObject explosionPrefab;
     protected virtual float CurrentHealth { get; set; }
 
 
@@ -15,8 +16,8 @@ public class Character : MonoBehaviour {
 	
     public virtual void ApplyDamage(float dmg)
     {
-        CurrentHealth -= dmg;
-        if (CurrentHealth <= 0f)
+        CurrentHealth = Mathf.Max(0f, CurrentHealth - dmg);
+        if (CurrentHealth == 0f)
         {
             Dead();
         }
@@ -24,6 +25,8 @@ public class Character : MonoBehaviour {
 
     protected virtual void Dead()
     {
+        var explosionEffect = Instantiate(explosionPrefab);
+        explosionEffect.transform.position = transform.position;
         gameObject.SetActive(false);
     }
 
