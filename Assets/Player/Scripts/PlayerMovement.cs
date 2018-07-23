@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ControlMode { Fly, Tap, Auto, Dead };
+
 public class PlayerMovement : MonoBehaviour {
 
     enum VerticalMovement { MovingToPoint, CompletingMovement, NotMoving };
@@ -65,10 +67,10 @@ public class PlayerMovement : MonoBehaviour {
         _controlMode = _newControlMode;
         switch (_controlMode)
         {
-            case ControlMode.Arcade:
+            case ControlMode.Fly:
                 ChangeToArcadeMode();
                 break;
-            case ControlMode.Flappy:
+            case ControlMode.Tap:
                 ChangeToFlappyMode();
                 break;
             case ControlMode.Dead:
@@ -117,11 +119,11 @@ public class PlayerMovement : MonoBehaviour {
     void MovementLogic()
     {
         _previousYPosition = transform.position.y;
-        if (_controlMode == ControlMode.Arcade)
+        if (_controlMode == ControlMode.Fly)
         {
             ArcadeMovement();
         }
-        else if (_controlMode == ControlMode.Flappy)
+        else if (_controlMode == ControlMode.Tap)
         {
             FlappyMovement();
         }
@@ -177,7 +179,7 @@ public class PlayerMovement : MonoBehaviour {
 
     IEnumerator HandleFlappyMovementEveryFixedUpdate()
     {
-        while (_controlMode == ControlMode.Flappy)
+        while (_controlMode == ControlMode.Tap)
         {
             float angle = -90f;
             if (_didFlap)
@@ -210,7 +212,7 @@ public class PlayerMovement : MonoBehaviour {
     IEnumerator HandleArcadeMovementEveryFixedUpdate()
     {
 
-        while (_controlMode == ControlMode.Arcade)
+        while (_controlMode == ControlMode.Fly)
         {
             if (_verticalMovement == VerticalMovement.MovingToPoint) //Move faster vertically
             {

@@ -26,7 +26,7 @@ public class Player : Character {
     // Use this for initialization
     protected override void Start () {
         CurrentHealth = startingHealth;
-        _myMovement.ChangeControlMode(ControlMode.Arcade);
+        _myMovement.ChangeControlMode(ControlMode.Fly);
         ControlModeChanged("Arcade");
     }
 
@@ -91,17 +91,21 @@ public class Player : Character {
         ControlModeChanged("Auto");
     }
 
-    public void ExitTransitionObject(bool _newAreaIsOpenAir)
+    public void ExitTransitionObject()
     {
-        if (_newAreaIsOpenAir)
+        var newAreaIsOpenAir = game.GameManager.instance.newAreaIsOpenAir;
+
+        if (newAreaIsOpenAir)
         {
-            _myMovement.ChangeControlMode(ControlMode.Arcade);
-            ControlModeChanged("Arcade");
+
+            _myMovement.ChangeControlMode(ControlMode.Fly);
+            ControlModeChanged("Fly");
         }
         else
         {
-            _myMovement.ChangeControlMode(ControlMode.Flappy);
-            ControlModeChanged("Flappy");
+            
+            _myMovement.ChangeControlMode(ControlMode.Tap);
+            ControlModeChanged("Tap");
         }
     }
 
