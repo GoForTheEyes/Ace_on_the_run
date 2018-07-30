@@ -429,7 +429,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08efd903d2335a14f8f36b638b2ee343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myGlobalManager: {fileID: 0}
   musicPlayer: {fileID: 82912667948849974}
   ambientPlayer: {fileID: 82494089934752584}
   sfxPlayer: {fileID: 82253139611579008}

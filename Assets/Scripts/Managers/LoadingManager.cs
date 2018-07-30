@@ -7,31 +7,92 @@ using UnityEngine.SceneManagement;
 public class LoadingManager : Singleton<LoadingManager>
 {
 
+    Action<String> UnloadComplete;
+
     string currentLevelName;
+    Scene currentScene;
+    string nextLevelName;
+    bool loadAfterUnload;
+
     List<AsyncOperation> loadOperations;
     List<AsyncOperation> unloadOperations;
 
     // Use this for initialization
     void Start ()
     {
+        currentScene = SceneManager.GetActiveScene();
+        currentLevelName = currentScene.name;
         loadOperations = new List<AsyncOperation>();
         unloadOperations = new List<AsyncOperation>();
-        GlobalManager.Instance.AddPersistentObject(gameObject);
     }
-	
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+
+        if (mode != LoadSceneMode.Additive)
+        {
+            return;
+        }
+
+        if (currentScene.name == "ManagerScene")
+        {
+            currentScene = scene;
+            currentLevelName = scene.name;
+            SceneManager.SetActiveScene(scene);
+            return;
+
+        }
+
+        DisableOldScene();
+
+        currentScene = scene;
+        currentLevelName = scene.name;
+
+        SceneManager.SetActiveScene(scene);
+    }
+
+    private void DisableOldScene()
+    {
+
+        if (currentScene.IsValid())
+        {
+            //Disable old scene
+            GameObject[] oldSceneObjects = currentScene.GetRootGameObjects();
+            for (int i = 0; i < oldSceneObjects.Length; i++)
+            {
+                oldSceneObjects[i].SetActive(false);
+            }
+        }
+        SceneManager.UnloadSceneAsync(currentScene);
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     public void ChangeScene()
     {
         GlobalState currentState = GlobalManager.Instance.GetCurrentGlobalState();
+
         switch (currentState)
         {
             case GlobalState.NotStarted:
-                LoadLevel("MainMenu", false);
+                LoadLevel("MainMenu", true);
+
                 break;
             case GlobalState.MainMenu:
-                LoadLevel("Game", false);
+               LoadLevel("Game", true);
+
                 break;
             default:
-                LoadLevel("MainMenu", false);
+                LoadLevel("MainMenu", true);
+
                 break;
         }
     }
@@ -59,11 +120,7 @@ public class LoadingManager : Singleton<LoadingManager>
         currentLevelName = levelName;
     }
 
-    void UnloadLevel(string levelName)
-    {
-        AsyncOperation ao = SceneManager.UnloadSceneAsync(levelName);
-        ao.completed += OnUnloadOperationComplete;
-    }
+
 
     void OnLoadOperationComplete(AsyncOperation ao)
     {
@@ -78,33 +135,32 @@ public class LoadingManager : Singleton<LoadingManager>
         }
     }
 
+
+
+    public void RestartGameScene()
+    {
+        LoadLevel("Game", true);
+    }
+
     private void UpdateGameState()
     {
-        if (currentLevelName == "MainMenu")
+        if (currentLevelName == "SplashScreen")
+        {
+            GlobalManager.Instance.UpdateState(GlobalState.NotStarted);
+        }
+        else if (currentLevelName == "MainMenu")
         {
             GlobalManager.Instance.UpdateState(GlobalState.MainMenu);
         }
         else
         {
-            GlobalManager.Instance.UpdateState(GlobalState.Playing);
+            GlobalManager.Instance.UpdateState(GlobalState.Paused);
         }
     }
 
-    void OnUnloadOperationComplete(AsyncOperation ao)
+    public void LoadSplash()
     {
-        if (unloadOperations.Contains(ao))
-        {
-            unloadOperations.Remove(ao);
-
-            if (unloadOperations.Count == 0)
-            {
-                Debug.Log("Unloaded");
-            }
-        }
+        LoadLevel("SplashScreen", true);
     }
-
-
-
-    
 
 }

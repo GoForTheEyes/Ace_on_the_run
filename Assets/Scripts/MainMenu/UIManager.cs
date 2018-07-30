@@ -26,12 +26,6 @@ namespace MainMenu
         {
             Main();
             Initialize();
-            SetUpCanvas();
-        }
-
-        void SetUpCanvas()
-        {
-            myCanvas.worldCamera = Camera.main;
         }
 
         void Initialize()

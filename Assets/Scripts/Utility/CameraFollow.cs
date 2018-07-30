@@ -20,8 +20,8 @@ public class CameraFollow : MonoBehaviour {
         worldWidth = Camera.main.ViewportToWorldPoint(Vector2.right).x - Camera.main.ViewportToWorldPoint(Vector2.zero).x;
         rightBoundX = worldWidth * MaxRightOffset;
         leftBoundX = worldWidth * MaxLeftOffset;
-
         ResetPosition();
+        FocusOnPlayer();
     }
 
     void ResetPosition()
@@ -29,22 +29,6 @@ public class CameraFollow : MonoBehaviour {
         transform.position = Vector3.zero;
     }
 
-
-    public void HandleGlobalStateChanged(GlobalState currentState, GlobalState oldState)
-    {
-        if ((oldState == GlobalState.Paused || oldState == GlobalState.Playing) &&
-            currentState == GlobalState.MainMenu || currentState == GlobalState.NotStarted)
-        {
-            focusCameraTarget = null;
-            ScreenDependentObjects.SetActive(false);
-            ResetPosition();
-        }
-        else if (oldState == GlobalState.MainMenu && 
-            (currentState == GlobalState.Paused || currentState == GlobalState.Playing))
-        {
-            FocusOnPlayer();
-        }
-    }
 
     void FocusOnPlayer()
     {
@@ -54,7 +38,7 @@ public class CameraFollow : MonoBehaviour {
         ScreenDependentObjects.SetActive(true);
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (focusCameraTarget != null)
         {
@@ -76,7 +60,9 @@ public class CameraFollow : MonoBehaviour {
         }
         else if (playerViewportXPosition - freeCameraXPositionMove < MaxLeftOffset)
         {
-            float cameraPositionX = focusCameraTarget.transform.position.x + (worldWidth / 2f) - leftBoundX;
+            float cameraPositionX = Mathf.Lerp(transform.position.x, 
+                focusCameraTarget.transform.position.x + (worldWidth / 2f) - leftBoundX, 
+                Time.fixedDeltaTime);
             transform.position =  new Vector3(cameraPositionX, transform.position.y, transform.position.z);
         }
 

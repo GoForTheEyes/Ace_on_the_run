@@ -19,6 +19,7 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField] List<AudioClip> gameMusicClips;
 
     int musicClipIndex = 0;
+    bool playing;
     bool mainMenu;
     float currentSongLength, timePlaying;
 
@@ -26,33 +27,21 @@ public class AudioManager : Singleton<AudioManager>
 
     private void Update()
     {
+        if (!playing)
+        {
+            return;
+        }
+
         if (!mainMenu)
         {
             timePlaying += Time.deltaTime;
             if (currentSongLength <= timePlaying)
             {
-
+                ChangeMusicTrack();
             }
         }
     }
 
-
-    //private void OnEnable()
-    //{
-    //    if (myGlobalManager)
-    //    {
-    //        myGlobalManager.OnGlobalStateChanged.AddListener(HandleGlobalStateChanged);
-    //    } 
-      
-    //}
-
-    //private void OnDisable()
-    //{
-    //    if (myGlobalManager)
-    //    {
-    //        myGlobalManager.OnGlobalStateChanged.RemoveListener(HandleGlobalStateChanged);
-    //    }
-    //}
 
     void StartMainMenuMusic()
     {
@@ -61,6 +50,7 @@ public class AudioManager : Singleton<AudioManager>
         musicPlayer.Play();
         musicPlayer.loop = true;
         mainMenu = true;
+        playing = true;
     }
 
     void StartGameMusic()
@@ -72,6 +62,7 @@ public class AudioManager : Singleton<AudioManager>
         musicPlayer.Play();
         musicPlayer.loop = false;
         mainMenu = false;
+        playing = true;
     }
 
     void ChangeMusicTrack()
@@ -106,6 +97,10 @@ public class AudioManager : Singleton<AudioManager>
             (currentState==GlobalState.Paused || currentState==GlobalState.Playing))
         {
             StartGameMusic();
+        }
+        else
+        {
+            playing = false;
         }
     }
 

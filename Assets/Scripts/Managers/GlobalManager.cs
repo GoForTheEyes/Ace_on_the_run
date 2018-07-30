@@ -11,23 +11,30 @@ public class GlobalManager : Singleton<GlobalManager>
 {
     public EventGameState OnGlobalStateChanged;
 #pragma warning disable 0649
-    [SerializeField] List<GameObject> PersistentObject;
-#pragma warning restore
+    public bool Debug;
+    public bool DebugMenu;
 
     GlobalState currentGlobalState = GlobalState.NotStarted;
+#pragma warning restore
+
 
     void Start ()
     {
-        foreach (var go in PersistentObject)
+        if (Debug)
         {
-            DontDestroyOnLoad(go);
+            OnGlobalStateChanged.Invoke(GlobalState.Paused, GlobalState.MainMenu);
         }
-    }
-	
-    public void AddPersistentObject(GameObject newPersistentObject)
-    {
-        PersistentObject.Add(newPersistentObject);
-        DontDestroyOnLoad(newPersistentObject);
+        else if (DebugMenu)
+        {
+            OnGlobalStateChanged.Invoke(GlobalState.MainMenu, GlobalState.NotStarted);
+        }
+        else
+        {
+            if (currentGlobalState == GlobalState.NotStarted)
+            {
+                LoadingManager.Instance.LoadSplash();
+            }
+        }
     }
 
     public void UpdateState(GlobalState state)

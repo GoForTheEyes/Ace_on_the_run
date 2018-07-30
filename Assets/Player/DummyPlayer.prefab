@@ -211,8 +211,8 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0.25
+  m_AngularDrag: 0
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 2
   m_SleepingMode: 1
@@ -526,10 +526,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b21b98b915dc3bc46917a8be86a161e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arcade_playerSpeed: 4
-  flappy_forwardSpeed: 2.5
-  flappy_bounceSpeed: 1
+  flappy_forwardSpeed: 5
+  flappy_bounceSpeed: 2
   auto_cruiseSpeed: 3.5
+  flySpeed: 4
+  maxClimbAngle: 30
+  turnSpeed: 1
+  tolerance: 0.0005
+  climbingFactor: 4
 --- !u!114 &114648223307959096
 MonoBehaviour:
   m_ObjectHideFlags: 1
