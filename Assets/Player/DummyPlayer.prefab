@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4211295351557696}
   - component: {fileID: 212680303423358694}
   - component: {fileID: 95268732375331480}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4764110116969542}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bay2
   m_TagString: Untagged
   m_Icon: {fileID: 4660412927644837186, guid: 0000000000000000d000000000000000, type: 0}
@@ -51,7 +51,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4031244534702528}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bay1
   m_TagString: Untagged
   m_Icon: {fileID: -3701561207968579530, guid: 0000000000000000d000000000000000, type: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 114241975855936894}
   - component: {fileID: 58824065368471218}
   - component: {fileID: 82927707801341374}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 4991996476820616}
   - component: {fileID: 114648223307959096}
   - component: {fileID: 82316338813351074}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: WeaponRack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 114253539923643636}
   - component: {fileID: 114231995098230166}
   - component: {fileID: 114757610215349826}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DummyPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -122,7 +122,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1411081713962150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.24, y: -0.29, z: 0}
+  m_LocalPosition: {x: 0.906, y: -0.183, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991996476820616}
@@ -136,7 +136,7 @@ Transform:
   m_GameObject: {fileID: 1255617341885400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4437010651939376}
   m_RootOrder: 0
@@ -164,8 +164,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1812916104256084}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.3, y: 0, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalPosition: {x: 0.05, y: 0, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 4437010651939376}
   m_RootOrder: 2
@@ -177,7 +177,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1399637538823928}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.99, y: -0.36, z: 0}
+  m_LocalPosition: {x: 0.829, y: -0.288, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4991996476820616}
@@ -230,9 +230,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.03, y: -0.3}
+  m_Offset: {x: 0, y: -0.08}
   serializedVersion: 2
-  m_Radius: 0.85
+  m_Radius: 0.74
 --- !u!60 &60148252301192768
 PolygonCollider2D:
   m_ObjectHideFlags: 1
@@ -257,14 +257,15 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.21687746, y: 0.27040663}
-      - {x: -0.011109352, y: 0.71116596}
-      - {x: -0.4987998, y: 0.5963226}
-      - {x: -0.70828295, y: -0.105202764}
-      - {x: -0.7290244, y: -0.5979378}
-      - {x: -0.023106575, y: -0.7133907}
-      - {x: 0.50341606, y: -0.57565385}
-      - {x: 0.79545593, y: -0.22579917}
+    - - {x: 0.37798643, y: -0.063745916}
+      - {x: 0.13209915, y: 0.10253093}
+      - {x: 0.032263756, y: 0.44118035}
+      - {x: -0.29059267, y: 0.4019932}
+      - {x: -0.43541956, y: -0.08004627}
+      - {x: -0.4238119, y: -0.35605013}
+      - {x: -0.058908463, y: -0.4448753}
+      - {x: 0.25876904, y: -0.3668086}
+      - {x: 0.46727037, y: -0.21983221}
 --- !u!82 &82316338813351074
 AudioSource:
   m_ObjectHideFlags: 1
@@ -526,7 +527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b21b98b915dc3bc46917a8be86a161e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flappy_forwardSpeed: 5
+  flappy_forwardSpeed: 2.5
   flappy_bounceSpeed: 2
   auto_cruiseSpeed: 3.5
   flySpeed: 4
@@ -608,7 +609,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.44, y: 1.37}
+  m_Size: {x: 1.33, y: 1.08}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0

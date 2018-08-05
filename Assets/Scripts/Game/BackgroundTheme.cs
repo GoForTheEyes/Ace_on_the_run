@@ -6,6 +6,7 @@ public class BackgroundTheme : MonoBehaviour {
 
     public List<List<GameObject>> BackgroundGroup { get; private set; }
     public List<List<GameObject>> ForegroundGroup { get; private set; }
+    [SerializeField] float worldUnitWidth;
     public float Width { get; private set; }
 
     public int BackgroundIndex { get; set; }
@@ -29,7 +30,8 @@ public class BackgroundTheme : MonoBehaviour {
         InitializeLists();
         if (BackgroundGroup != null)
         {
-            Width = BackgroundGroup[0][0].GetComponent<SpriteRenderer>().bounds.extents.x * 2f;
+            Width = BackgroundGroup[0][0].GetComponent<SpriteRenderer>().sprite.bounds.extents.x * 2f;
+            //Width = worldUnitWidth;
         }
 	}
 	

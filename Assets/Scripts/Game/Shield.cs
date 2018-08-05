@@ -32,18 +32,26 @@ public class Shield : MonoBehaviour
         }
 	}
 
-    private void OnTriggerEnter2D(Collider2D collision)
+
+    public void OnImpact(Ammo incomingProjectile)
     {
         if (ShieldStrength <= 0) return; //Shield is offline
-        if (!collision.gameObject.GetComponent<Ammo>()) return; //Shield only reacts to ammo
-        
-        Ammo incomingProjectile = collision.GetComponent<Ammo>();
-        if (incomingProjectile.ammoTarget == Ammo.AmmoTarget.Enemy) return; //Shield ignores player ammo (ammo seeking enemies)
-
         ReduceShield(incomingProjectile.Damage);
-        incomingProjectile.Impact();
         ShieldImpactEffect();
     }
+
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (ShieldStrength <= 0) return; //Shield is offline
+    //    if (!collision.gameObject.GetComponent<Ammo>()) return; //Shield only reacts to ammo
+
+    //    Ammo incomingProjectile = collision.GetComponent<Ammo>();
+    //    if (incomingProjectile.ammoTarget == Ammo.AmmoTarget.Enemy) return; //Shield ignores player ammo (ammo seeking enemies)
+
+    //    ReduceShield(incomingProjectile.Damage);
+    //    incomingProjectile.Impact();
+    //    ShieldImpactEffect();
+    //}
 
     void ReduceShield(float incomingDamage)
     {

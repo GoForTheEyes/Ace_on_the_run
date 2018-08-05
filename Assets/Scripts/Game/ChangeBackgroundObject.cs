@@ -25,8 +25,6 @@ public class ChangeBackgroundObject : MonoBehaviour {
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            var player = collision.GetComponent<Player>();
-            player.ExitTransitionObject();
             ExitTransitionArea();
         }
     }

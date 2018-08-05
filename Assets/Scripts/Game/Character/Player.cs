@@ -27,13 +27,28 @@ public class Player : Character {
     }
 
     // Use this for initialization
-    protected override void Start () {
+    protected override void Start() {
         CurrentHealth = startingHealth;
-        _myMovement.ChangeControlMode(ControlMode.Fly);
-        ControlModeChanged("Fly");
-        //_myMovement.ChangeControlMode(ControlMode.Tap);
-        //ControlModeChanged("Tap");
+    }
 
+    public void ChangeControlMode(Game.GameMode newGameMode)
+    {
+        if (!_dead)
+        {
+            switch (newGameMode)
+            {
+                case Game.GameMode.Fly:
+                    _myMovement.ChangeControlMode(ControlMode.Fly);
+                    ControlModeChanged("Fly");
+                    break;
+                case Game.GameMode.Tap:
+                    _myMovement.ChangeControlMode(ControlMode.Tap);
+                    ControlModeChanged("Tap");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void OnEnable()
@@ -98,21 +113,7 @@ public class Player : Character {
         ControlModeChanged("Auto");
     }
 
-    public void ExitTransitionObject()
-    {
-        var newAreaIsOpenAir = Game.GameManager.instance.newAreaIsOpenAir;
 
-        if (newAreaIsOpenAir)
-        {
-            _myMovement.ChangeControlMode(ControlMode.Fly);
-            ControlModeChanged("Fly");
-        }
-        else
-        {
-            _myMovement.ChangeControlMode(ControlMode.Tap);
-            ControlModeChanged("Tap");
-        }
-    }
 
     public bool PlayerAlive()
     {

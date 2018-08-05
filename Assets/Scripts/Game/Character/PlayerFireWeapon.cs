@@ -34,7 +34,7 @@ public class PlayerFireWeapon : MonoBehaviour {
             shot.Speed = bulletSpeed;
             shot.Damage = damage;
             shot.Direction = Ammo.ShotDirection.right;
-            shot.ammoTarget = Ammo.AmmoTarget.Enemy;
+            shot.gameObject.layer = LayerMask.NameToLayer("Player Ammo");
             AmmoFired(energyConsumption);
         }
         

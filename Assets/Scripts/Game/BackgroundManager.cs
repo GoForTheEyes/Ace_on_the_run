@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using System.Linq;
 
@@ -8,14 +9,10 @@ public class BackgroundManager : MonoBehaviour {
 
 #pragma warning disable 0649
 
-    public System.Action StartTransition;
-
     [Header("Background Switching")]
-    [SerializeField] float _minTimeBeforeSwappingBackground;
-    [SerializeField] float _chanceOfBackgroundTransition;
     [SerializeField] GameObject transitionObject;
-    bool _openAirBackground;
-    float _timeSinceLastTransition;
+    bool openAirBackground;
+    bool setTransitionObject;
 
     [Header("Background Styles")]
     [SerializeField] List<BackgroundTheme> backgroundStyles;
@@ -53,37 +50,26 @@ public class BackgroundManager : MonoBehaviour {
 
         ChangeStyleType(); //By default selects open air
         InitializeBackgrounds();
-        _timeSinceLastTransition = 0f;
-    }
-
-    private void Update()
-    {
-        
     }
 
     //Camera moves with LateUpdate, thus manager uses it instead of Update
     private void LateUpdate()
     {
+        _lastCameraX = _currentCameraX;
         _currentCameraX = _cameraTransform.position.x;
-        _timeSinceLastTransition += Time.deltaTime;
-        ParallaxEffect();
+
+        if (setTransitionObject)
+        {
+            SetTransitionObject();
+            ChangeStyleType();
+            setTransitionObject = false;
+            CheckForElementsAfterTransitionObject();
+            return;
+        }
+
         CheckBackground();
         CheckForeground();
-        _lastCameraX = _cameraTransform.position.x;
-
-    }
-
-    bool CheckIfTransition()
-    {
-        if (_timeSinceLastTransition > _minTimeBeforeSwappingBackground)
-        {
-            if (_chanceOfBackgroundTransition < Random.Range(0f, 1f))
-            {
-                _timeSinceLastTransition = 0f;
-                return true;
-            }
-        }
-        return false;
+        ParallaxEffect();
     }
 
     void InitializeStyles()
@@ -106,7 +92,7 @@ public class BackgroundManager : MonoBehaviour {
         _backgroundGroup = _currentTheme.BackgroundGroup;
         _foregroundGroup = _currentTheme.ForegroundGroup;
         //First background panel is to the left of the player;
-        Vector3 firstBackgroundPosition = new Vector3(-_currentTheme.Width, 0f, 0f);
+        float firstBackgroundPositionX = -_currentTheme.Width;
         //group of elements that make one complete background image
         for (int i = 0; i < _backgroundGroup.Count; i++) 
         {
@@ -114,7 +100,9 @@ public class BackgroundManager : MonoBehaviour {
             foreach (var group in _backgroundGroup[i])
             {
                 group.SetActive(true);
-                group.transform.position = firstBackgroundPosition + Vector3.right * _currentTheme.Width * i;
+                group.transform.position = new Vector3(
+                    firstBackgroundPositionX + _currentTheme.Width * i,
+                    group.transform.position.y, group.transform.position.z);
             }
             _currentTheme.IncreaseBackgroundIndex();
         }
@@ -125,7 +113,9 @@ public class BackgroundManager : MonoBehaviour {
             foreach (var group in _foregroundGroup[i])
             {
                 group.SetActive(true);
-                group.transform.position = firstBackgroundPosition + Vector3.right * _currentTheme.Width * i;
+                group.transform.position = new Vector3(
+                    firstBackgroundPositionX + _currentTheme.Width * i,
+                    group.transform.position.y, group.transform.position.z);
             }
             _currentTheme.IncreaseForegroundIndex();
         }
@@ -134,47 +124,87 @@ public class BackgroundManager : MonoBehaviour {
 
     void ChangeStyleType()
     {
-        if (!_openAirBackground)
+        if (!openAirBackground)
         {
             _currentStyleName = OpenAirStyle[Random.Range(0, OpenAirStyle.Count)];
-            _openAirBackground = true;
+            openAirBackground = true;
         }
         else
         {
             _currentStyleName = CavernStyle[Random.Range(0, CavernStyle.Count)];
-            _openAirBackground = false;
+            openAirBackground = false;
         }
         _currentTheme = _styleDictionary[_currentStyleName];
     }
 
     void ParallaxEffect()
     {
+        var deltaTime = Time.deltaTime;
+        float deltaX = _currentCameraX - _lastCameraX;
+        
+        if (deltaX == 0)
+        {
+            return;
+        }
+
+        Vector3 backgroundParallaxMovement = Vector3.left * deltaTime * backgroundParallaxSpeed * Mathf.Sign(deltaX);
+        backgroundParallaxMovement.x = Mathf.Round(backgroundParallaxMovement.x * 100000f) / 100000f;
+        Vector3 foregroundParallaxMovement = Vector3.left * deltaTime * foregroundParallaxSpeed * Mathf.Sign(deltaX);
+        foregroundParallaxMovement.x = Mathf.Round(foregroundParallaxMovement.x * 100000f) / 100000f;
+
         if (backgroundParallax)
         {
-            foreach (var group in _backgroundGroup)
-            {
-                foreach (var element in group)
-                {
-                    float deltaX = _currentCameraX - _lastCameraX;
-                    if (deltaX != 0)
-                    {
-                        element.transform.position += Vector3.left * deltaX * backgroundParallaxSpeed;
-                    }
-                }
-            }
+            MoveParallax(_backgroundGroup, backgroundParallaxMovement);
+            //For some reason parallax movement is not being uniform, therefore we need to check aligment
+            AlignParallax(_backgroundGroup);
         }
+
         if (foregroundParallax)
         {
-            foreach (var group in _foregroundGroup)
+            MoveParallax(_foregroundGroup, foregroundParallaxMovement);
+            //For some reason parallax movement is not being uniform, therefore we need to check aligment
+            AlignParallax(_foregroundGroup);
+        }
+    }
+
+    void MoveParallax(List<List<GameObject>> container, Vector3 parallaxMovement)
+    {
+        foreach (var group in container)
+        {
+
+            foreach (var element in group)
             {
-                foreach (var element in group)
-                {
-                    float deltaX = _currentCameraX - _lastCameraX;
-                    if (deltaX != 0)
-                    {
-                        element.transform.position += Vector3.left * deltaX * foregroundParallaxSpeed;
-                    }
-                }
+                element.transform.position += parallaxMovement;
+            }
+        }
+    }
+
+    void AlignParallax(List<List<GameObject>> container)
+    {
+        //CheckOrder
+        if (container[0][0].transform.position.x >= container[1][0].transform.position.x ||
+            container[1][0].transform.position.x >= container[2][0].transform.position.x ||
+            container[2][0].transform.position.x >= container[3][0].transform.position.x ||
+            container[3][0].transform.position.x >= container[4][0].transform.position.x)
+        {
+            container = container.OrderBy(t => t.First().transform.position.x).ToList(); //Order by X position
+        }
+
+        var Decimals = container[0][0].transform.position.x - Mathf.Floor(container[0][0].transform.position.x);
+
+        for (int i = 1; i < container.Count; i++)
+        {
+            var currentDecimal = container[i][0].transform.position.x - Mathf.Floor(container[i][0].transform.position.x);
+
+            if (currentDecimal == Decimals) continue;
+
+            var width = Mathf.Round(container[i][0].GetComponent<SpriteRenderer>().sprite.bounds.size.x);
+
+            foreach (var element in container[i])
+            {
+                var aux = element.transform.position;
+                aux.x = container[i-1][0].transform.position.x + width;
+                element.transform.position = aux;
             }
         }
     }
@@ -187,21 +217,43 @@ public class BackgroundManager : MonoBehaviour {
         var _firstBackgroundGroup = _backgroundGroup.First();
         var _firstBackgroundGroupPostionX = _firstBackgroundGroup.First().transform.position.x;
 
-        var _maxDistanceFromCameraBeforeCollection = _firstBackgroundGroup[0].GetComponent<SpriteRenderer>().bounds.size.x;
+        var _distanceFromCameraBeforeCollection = _firstBackgroundGroup[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x + 10f;
 
-        if (_maxDistanceFromCameraBeforeCollection < 
+        if (_distanceFromCameraBeforeCollection < 
             _currentCameraX - _firstBackgroundGroupPostionX) //Check if object is beyond allowed distance from camera
         {
             CollectFirstBackground();
-
-            if (CheckIfTransition())
-            {
-                SetTransitionObject();
-                ChangeStyleType();
-                StartTransition();
-            }
             SetNewBackground();
         }
+    }
+
+    //Check if background/foreground elements of old theme are right of transition object center
+    void CheckForElementsAfterTransitionObject()
+    {
+        if (_backgroundGroup.Last()[0].transform.position.x > transitionObject.transform.position.x)
+        {
+            CollectLastBackground();
+            SetNewBackground();
+        }
+
+        if (_foregroundGroup.Last()[0].transform.position.x > transitionObject.transform.position.x)
+        {
+            CollectLastForeground();
+            SetNewForeground();
+
+        }
+
+
+    }
+
+    void CollectLastBackground()
+    {
+        var _lastBackgroundGroup = _backgroundGroup.Last();
+        foreach (var group in _lastBackgroundGroup)
+        {
+            group.SetActive(false);
+        }
+        _backgroundGroup.RemoveAt(_backgroundGroup.Count-1);
     }
 
     void CollectFirstBackground()
@@ -222,7 +274,7 @@ public class BackgroundManager : MonoBehaviour {
         _backgroundGroup.Add(_nextBackground);
         _currentTheme.IncreaseBackgroundIndex();
 
-        _widthLastBackground = _lastBackgroundGroup[0].GetComponent<SpriteRenderer>().bounds.size.x;
+        _widthLastBackground = _lastBackgroundGroup[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x;
 
         foreach (var element in _nextBackground) 
         {
@@ -238,9 +290,13 @@ public class BackgroundManager : MonoBehaviour {
     void SetTransitionObject()
     {
         var _lastBackgroundGroup = _backgroundGroup.Last();
-        var _lastBackgroundGroupPostionX = _lastBackgroundGroup.First().transform.position.x;
+        var _lastBackgroundGroupPositionX = _lastBackgroundGroup.First().transform.position.x;
+        var _lastForegroundGroup = _foregroundGroup.Last();
+        var _lastForegroundGroupPositionX = _lastForegroundGroup.First().transform.position.x;
         transitionObject.SetActive(true);
-        transitionObject.transform.position = new Vector3(_lastBackgroundGroupPostionX, 0f, 0f);
+        transitionObject.transform.position = new Vector3(
+            Mathf.Max(_lastBackgroundGroupPositionX, _lastForegroundGroupPositionX)
+            , 0f, 0f);
     }
 
     void CheckForeground()
@@ -251,7 +307,7 @@ public class BackgroundManager : MonoBehaviour {
         var _firstForegroundGroup = _foregroundGroup.First();
         var _firstForegroundGroupPostionX = _firstForegroundGroup.First().transform.position.x;
 
-        var _maxDistanceFromCameraBeforeCollection = _firstForegroundGroup[0].GetComponent<SpriteRenderer>().bounds.size.x;
+        var _maxDistanceFromCameraBeforeCollection = _firstForegroundGroup[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x + 10f;
 
         if (_maxDistanceFromCameraBeforeCollection <
             _currentCameraX - _firstForegroundGroupPostionX) //Check if object is beyond allowed distance from camera
@@ -259,6 +315,16 @@ public class BackgroundManager : MonoBehaviour {
             CollectFirstForeground();
             SetNewForeground();
         }
+    }
+
+    void CollectLastForeground()
+    {
+        var _lastForegroundGroup = _foregroundGroup.Last();
+        foreach (var group in _lastForegroundGroup)
+        {
+            group.SetActive(false);
+        }
+        _foregroundGroup.RemoveAt(_foregroundGroup.Count-1);
     }
 
     void CollectFirstForeground()
@@ -278,7 +344,8 @@ public class BackgroundManager : MonoBehaviour {
         var _nextForeground = _currentTheme.ForegroundGroup[_currentTheme.NextAvailableForegroundIndex];
         _foregroundGroup.Add(_nextForeground);
         _currentTheme.IncreaseForegroundIndex();
-        _widthLastForeground = _lastForegroundGroup[0].GetComponent<SpriteRenderer>().bounds.size.x;
+        _widthLastForeground = _lastForegroundGroup[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+
         foreach (var element in _nextForeground)
         {
             element.transform.position =
@@ -289,5 +356,11 @@ public class BackgroundManager : MonoBehaviour {
         }
         
     }
+
+    public void OnStartTransition()
+    {
+        setTransitionObject = true;
+    }
+
 
 }

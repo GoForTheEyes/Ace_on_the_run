@@ -14,17 +14,15 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] float flappy_bounceSpeed = 5f;
     [SerializeField] float auto_cruiseSpeed = 3.5f;
 
-    float _previousYPosition;
-    
+   
     float _yDistanceInitial;
     float _currentPower;
-    Vector3 _currentVelocity;
     Vector3 _newPosition;
     Vector3 _moveDirection;
     Quaternion _targetRotation;
     Rigidbody2D myRigidbody;
     PlayerEngine myEngine;
-    float _minY, _maxY, _height, _floorHeight;
+    float _minY, _maxY, _height;
 
     ControlMode _controlMode;
     bool _didFlap;
@@ -39,7 +37,6 @@ public class PlayerMovement : MonoBehaviour {
     float distanceTraveled;
     float distanceRemaining;
     float directionModifier;
-    float startingRotation;
     float currentRotationAngle;
 
     RotationStage myRotationStage;
@@ -65,7 +62,6 @@ public class PlayerMovement : MonoBehaviour {
         _height = GetHeight();
         _minY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.0275f)).y; //Can't go lower than 2.75% of screen
         _maxY = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0.975f)).y; //Can't go lower than 97.5% of screen
-        _floorHeight = Camera.main.ViewportToWorldPoint(new Vector2(0f, 0f)).y;
     }
 
     float GetHeight()
@@ -139,7 +135,6 @@ public class PlayerMovement : MonoBehaviour {
 
     void MovementLogic()
     {
-        _previousYPosition = transform.position.y;
         if (_controlMode == ControlMode.Fly)
         {
             FlyMovement();
@@ -165,7 +160,7 @@ public class PlayerMovement : MonoBehaviour {
     void CalculateDestination()
     {
         startingPositionY = transform.position.y;
-        startingRotation = myRigidbody.rotation;
+        //startingRotation = myRigidbody.rotation;
         targetHeigth = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
         targetHeigth = Mathf.Clamp(targetHeigth, _minY + _height, _maxY - _height);
         distanceToTravel = Mathf.Abs(targetHeigth - startingPositionY);
@@ -353,7 +348,6 @@ public class PlayerMovement : MonoBehaviour {
     {
         _newPosition = transform.position + transform.right * speed * _currentPower * Time.fixedDeltaTime;
         _newPosition.y = Mathf.Clamp(_newPosition.y, _minY + _height, _maxY - _height);
-        _currentVelocity = (_newPosition - transform.position) * Time.fixedDeltaTime;
         transform.position = _newPosition;
     }
 

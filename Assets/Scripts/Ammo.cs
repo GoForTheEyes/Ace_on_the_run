@@ -11,7 +11,6 @@ public class Ammo : MonoBehaviour {
     public float Damage { get; set; }
     public float Speed { get; set; }
     [HideInInspector] public ShotDirection Direction;
-    [HideInInspector] public AmmoTarget ammoTarget;
 
     int _directionModifier;
 
@@ -34,11 +33,22 @@ public class Ammo : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D hitObject)
     {
-        if (hitObject.gameObject.CompareTag(ammoTarget.ToString()))
+        if (hitObject.gameObject.GetComponentInChildren<Shield>() != null)
+        {
+            var shield = hitObject.GetComponentInChildren<Shield>();
+            if (shield.ShieldStrength > 0)
+            {
+                shield.OnImpact(this);
+                Impact();
+                return;
+            }
+        }
+
+        if (hitObject.gameObject.GetComponent<Character>() != null)
         {
             hitObject.GetComponent<Character>().ApplyDamage(Damage);
             Impact();
-        }
+        }  
     }
 
     public void Impact()

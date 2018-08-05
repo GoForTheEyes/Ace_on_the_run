@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4632714567862914}
   - component: {fileID: 212339654160515604}
   - component: {fileID: 95305909833090036}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy_ShipA_a
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114521530143262054}
   - component: {fileID: 114934054922841632}
   - component: {fileID: 114248531150047484}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy_Interceptor_Purple
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4807226188224036}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: WeaponRack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,6 +167,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114248531150047484
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -235,6 +236,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

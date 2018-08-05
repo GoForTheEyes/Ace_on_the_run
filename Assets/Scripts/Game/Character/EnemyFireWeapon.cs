@@ -23,7 +23,7 @@ public class EnemyFireWeapon : MonoBehaviour {
             shot.Speed = bulletSpeed;
             shot.Damage = damage;
             shot.Direction = Ammo.ShotDirection.left;
-            shot.ammoTarget = Ammo.AmmoTarget.Player;
+            shot.gameObject.layer = LayerMask.NameToLayer("Enemies Ammo");
         }
         _timeSinceLastShotFired = 0f;
     }

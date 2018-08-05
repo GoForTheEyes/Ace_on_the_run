@@ -15,7 +15,7 @@ public class LoadingManager : Singleton<LoadingManager>
     bool loadAfterUnload;
 
     List<AsyncOperation> loadOperations;
-    List<AsyncOperation> unloadOperations;
+
 
     // Use this for initialization
     void Start ()
@@ -23,7 +23,6 @@ public class LoadingManager : Singleton<LoadingManager>
         currentScene = SceneManager.GetActiveScene();
         currentLevelName = currentScene.name;
         loadOperations = new List<AsyncOperation>();
-        unloadOperations = new List<AsyncOperation>();
     }
 
     private void OnEnable()
@@ -120,8 +119,6 @@ public class LoadingManager : Singleton<LoadingManager>
         currentLevelName = levelName;
     }
 
-
-
     void OnLoadOperationComplete(AsyncOperation ao)
     {
         if (loadOperations.Contains(ao))
@@ -134,8 +131,6 @@ public class LoadingManager : Singleton<LoadingManager>
             }
         }
     }
-
-
 
     public void RestartGameScene()
     {

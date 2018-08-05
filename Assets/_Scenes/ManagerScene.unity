@@ -120,11 +120,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: OnGlobalStateChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4744093500522872, guid: c3e425d1f94f7234891213a849676440, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -162,75 +157,15 @@ Prefab:
       propertyPath: OnGlobalStateChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 899501184}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: OnGlobalStateChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: PersistentObject.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: PersistentObject.Array.data[2]
-      value: 
-      objectReference: {fileID: 899501183}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: PersistentObject.Array.data[3]
-      value: 
-      objectReference: {fileID: 1152879974}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: PersistentObject.Array.data[4]
-      value: 
-      objectReference: {fileID: 1674793425}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: DebugMenu
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: Debug
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: OnGlobalStateChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: HandleGlobalStateChanged
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: OnGlobalStateChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 114437809938257324, guid: c3e425d1f94f7234891213a849676440,
-        type: 2}
-      propertyPath: OnGlobalStateChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c3e425d1f94f7234891213a849676440, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &899501183 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1589270233216226, guid: 1ecd8c091ce12074eaa79d6a4b9edc82,
-    type: 2}
-  m_PrefabInternal: {fileID: 1206680804}
 --- !u!114 &899501184 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114829012786441854, guid: 1ecd8c091ce12074eaa79d6a4b9edc82,
     type: 2}
   m_PrefabInternal: {fileID: 1206680804}
   m_Script: {fileID: 11500000, guid: 08efd903d2335a14f8f36b638b2ee343, type: 3}
---- !u!1 &1152879974 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1115487306757624, guid: d1fdffee06e5a594e9a9a5dceb82e788,
-    type: 2}
-  m_PrefabInternal: {fileID: 1798082951}
 --- !u!1001 &1206680804
 Prefab:
   m_ObjectHideFlags: 0

@@ -4,7 +4,8 @@ public class DestroyAfterEffect : MonoBehaviour
 {
     public void EliminateFromScene()
     {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
+        //gameObject.SetActive(false);
     }
 
 	
